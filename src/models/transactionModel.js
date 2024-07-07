@@ -31,7 +31,8 @@ const transactionSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    createdBy: { type: mongoose.Types.ObjectId, ref: "users", required: true },
+    user: { type: mongoose.Types.ObjectId, ref: "users", required: true },
+    account: { type: mongoose.Types.ObjectId, ref: "accounts", required: true },
   },
   { timestamps: true }
 );

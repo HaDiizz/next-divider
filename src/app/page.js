@@ -1,3 +1,4 @@
+import { getAccounts } from "@/actions/accountAction";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import AccountDataTable from "@/components/AccountDataTable";
 import CreateAccount from "@/components/CreateAccount";
@@ -9,10 +10,17 @@ export default async function Home() {
   if (!session) {
     redirect("/sign-in");
   }
+  const data = await getAllAccounts();
   return (
-    <div className="flex min-h-screen flex-col items-center justify-between p-24">
+    <div className="pt-[8rem] p-5 md:p-24">
       <CreateAccount />
-      <AccountDataTable />
+      <AccountDataTable accounts={data?.accounts || []} />
     </div>
   );
+}
+
+async function getAllAccounts() {
+  const response = await getAccounts();
+  if (response?.error) return [];
+  return response;
 }

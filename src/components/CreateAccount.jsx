@@ -99,7 +99,7 @@ const CreateAccount = () => {
       <div className="flex justify-end w-full">
         <Button
           variant="filled"
-          size="md"
+          size="sm"
           radius="md"
           className="bg-secondary"
           onClick={open}

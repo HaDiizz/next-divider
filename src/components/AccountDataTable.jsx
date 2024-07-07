@@ -3,16 +3,17 @@
 import { DataTable } from "mantine-datatable";
 import sortBy from "lodash/sortBy";
 import { useEffect, useState } from "react";
-import { accounts } from "@/utils/data";
 import {
   EyeOpenIcon,
   ChevronUpIcon,
   CaretSortIcon,
 } from "@radix-ui/react-icons";
+import Link from "next/link";
+import { formatNumber } from "@/utils/formatNumber";
 
 const PAGE_SIZES = [10, 15, 20];
 
-export default function AccountDataTable() {
+export default function AccountDataTable({ accounts }) {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(PAGE_SIZES[1]);
   const [sortStatus, setSortStatus] = useState({
@@ -35,11 +36,13 @@ export default function AccountDataTable() {
     setRecords(
       sortStatus.direction === "desc" ? dataSliced.reverse() : dataSliced
     );
-  }, [page, pageSize, sortStatus]);
+  }, [page, pageSize, sortStatus, accounts]);
 
   return (
-    <>
+    <div className="pt-10">
       <DataTable
+        height={400}
+        className="table-auto"
         idAccessor={(record) => record._id}
         withTableBorder
         withColumnBorders
@@ -53,15 +56,27 @@ export default function AccountDataTable() {
         records={records}
         columns={[
           { accessor: "name", title: "ชื่อบัญชี", sortable: true },
-          { accessor: "members", title: "จำนวนสมาชิกในบัญชี", sortable: true },
-          { accessor: "allAssets", title: "จำนวนเงินโดยรวม", sortable: true },
           {
-            accessor: "Action",
+            accessor: "members",
+            title: "จำนวนสมาชิกในบัญชี",
+            sortable: true,
+            render: (record) => formatNumber(record?.members?.length),
+          },
+          {
+            accessor: "totalAmount",
+            title: "จำนวนเงินโดยรวม (บาท)",
+            sortable: true,
+            render: (record) => formatNumber(record?.totalAmount),
+          },
+          {
+            accessor: "",
             textAlign: "center",
-            render: (_) => (
-              <span>
-                <EyeOpenIcon className="w-5 h-5 cursor-pointer text-primary" />
-              </span>
+            render: (record) => (
+              <div className="flex justify-center">
+                <Link href={`/account/${record._id}`}>
+                  <EyeOpenIcon className="w-5 h-5 cursor-pointer text-primary" />
+                </Link>
+              </div>
             ),
           },
         ]}
@@ -72,6 +87,6 @@ export default function AccountDataTable() {
           unsorted: <CaretSortIcon />,
         }}
       />
-    </>
+    </div>
   );
 }

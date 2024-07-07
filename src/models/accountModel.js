@@ -8,6 +8,7 @@ const accountSchema = new mongoose.Schema(
     },
     transactions: [{ type: mongoose.Types.ObjectId, ref: "transactions" }],
     members: [{ type: mongoose.Types.ObjectId, ref: "users" }],
+    owner: { type: mongoose.Types.ObjectId, ref: "users", required: true },
   },
   { timestamps: true }
 );
