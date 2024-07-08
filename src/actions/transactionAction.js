@@ -120,8 +120,40 @@ export async function getTransactions(accountId, date = new Date()) {
       account: {
         name: validAccount.name,
         members: validAccount.members.length,
-        owner: validAccount.owner.username,
+        owner: {
+          _id: validAccount.owner._id.toString(),
+          username: validAccount.owner.username,
+        },
       },
+    };
+  } catch (err) {
+    console.log(err);
+    return {
+      error: true,
+      message: err?.message || "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง",
+    };
+  }
+}
+
+export async function deleteTransaction(transactionId) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      throw { message: "กรุณาเข้าสู่ระบบ" };
+    }
+    await connectDB();
+    const transaction = await Transaction.findById(transactionId);
+    if (!transaction) throw { message: "ไม่เจอรายการดังกล่าว" };
+    const accountId = transaction.account;
+
+    await Transaction.findByIdAndDelete(transactionId);
+
+    await Account.findByIdAndUpdate(accountId, {
+      $pull: { transactions: transactionId },
+    });
+    return {
+      success: true,
+      message: "ลบรายการสำเร็จ",
     };
   } catch (err) {
     console.log(err);

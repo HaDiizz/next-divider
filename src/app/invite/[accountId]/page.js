@@ -21,6 +21,8 @@ const Page = ({ params }) => {
     if (!session) router.push("/sign-in");
   }, [session, router]);
 
+  if (data?.error) return router.push("/");
+
   const handleJoinTheGroup = async () => {
     setIsJoining(true);
     try {

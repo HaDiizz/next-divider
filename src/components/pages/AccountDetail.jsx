@@ -10,17 +10,31 @@ import CreateTransaction from "../CreateTransaction";
 import { useQuery } from "@tanstack/react-query";
 import { getTransactions } from "@/actions/transactionAction";
 import { formatNumber } from "@/utils/formatNumber";
-import { DotsVerticalIcon, Share1Icon } from "@radix-ui/react-icons";
+import {
+  DotsVerticalIcon,
+  ExitIcon,
+  Share1Icon,
+  TrashIcon,
+} from "@radix-ui/react-icons";
 import { notifications } from "@mantine/notifications";
+import { useSession } from "next-auth/react";
+import { deleteAccountGroup, leaveAccountGroup } from "@/actions/accountAction";
+import { useRouter } from "next/navigation";
 
 moment.locale("th");
 
 const AccountDetail = ({ accountId }) => {
+  const router = useRouter();
+  const { data: session } = useSession();
+  const [isLeaving, setIsLeaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [monthSelected, setMonthSelected] = useState(new Date());
   const { data, isLoading, refetch } = useQuery({
     queryFn: async () => await getTransactions(accountId, monthSelected),
     queryKey: ["transactions", accountId, monthSelected],
   });
+
+  if (data?.error) return router.push("/");
 
   const handleCopyLink = () => {
     navigator.clipboard
@@ -43,6 +57,69 @@ const AccountDetail = ({ accountId }) => {
           color: "green",
         });
       });
+  };
+
+  const handleLeaveGroup = async () => {
+    if (confirm(`ต้องการออกจากบัญชี ${data?.account?.name} ใช่ไหม`)) {
+      setIsLeaving(true);
+      try {
+        const response = await leaveAccountGroup(accountId);
+        if (response.error) {
+          notifications.show({
+            title: "เกิดข้อผิดพลาด",
+            message: response?.message || "ออกจากกลุ่ม/บัญชีไม่สำเร็จ",
+            color: "red",
+          });
+        } else {
+          refetch();
+          notifications.show({
+            title: "สำเร็จ",
+            message: response?.message || "ออกจากกลุ่ม/บัญชีสำเร็จ",
+            color: "green",
+          });
+          router.push("/");
+        }
+      } catch (err) {
+        notifications.show({
+          title: "เกิดข้อผิดพลาด",
+          message: err?.message || "ออกจากกลุ่ม/บัญชีไม่สำเร็จ",
+          color: "red",
+        });
+      } finally {
+        setIsLeaving(false);
+      }
+    }
+  };
+  const handleDeleteGroup = async () => {
+    if (confirm(`ต้องการลบบัญชี ${data?.account?.name} ใช่ไหม`)) {
+      setIsDeleting(true);
+      try {
+        const response = await deleteAccountGroup(accountId);
+        if (response.error) {
+          notifications.show({
+            title: "เกิดข้อผิดพลาด",
+            message: response?.message || "ลบกลุ่ม/บัญชีไม่สำเร็จ",
+            color: "red",
+          });
+        } else {
+          refetch();
+          notifications.show({
+            title: "สำเร็จ",
+            message: response?.message || "ลบกลุ่ม/บัญชีสำเร็จ",
+            color: "green",
+          });
+          router.push("/");
+        }
+      } catch (err) {
+        notifications.show({
+          title: "เกิดข้อผิดพลาด",
+          message: err?.message || "ลบกลุ่ม/บัญชีไม่สำเร็จ",
+          color: "red",
+        });
+      } finally {
+        setIsDeleting(false);
+      }
+    }
   };
   return (
     <>
@@ -116,11 +193,34 @@ const AccountDetail = ({ accountId }) => {
                 <Menu.Target>
                   <DotsVerticalIcon className="hover:cursor-pointer" />
                 </Menu.Target>
-                <Menu.Dropdown onClick={handleCopyLink}>
-                  <Menu.Label>Share Account</Menu.Label>
-                  <Menu.Item leftSection={<Share1Icon />}>
-                    Copy account link
+                <Menu.Dropdown>
+                  <Menu.Label>Application</Menu.Label>
+                  <Menu.Item
+                    onClick={handleCopyLink}
+                    leftSection={<Share1Icon />}
+                  >
+                    คัดลอกลิงก์
                   </Menu.Item>
+                  <Menu.Label>Danger Zone</Menu.Label>
+                  {session && session.user._id === data?.account?.owner?._id ? (
+                    <Menu.Item
+                      disabled={isDeleting}
+                      onClick={() => handleDeleteGroup()}
+                      color="red"
+                      leftSection={<TrashIcon />}
+                    >
+                      ลบบัญชีถาวร
+                    </Menu.Item>
+                  ) : (
+                    <Menu.Item
+                      disabled={isLeaving}
+                      onClick={() => handleLeaveGroup()}
+                      color="red"
+                      leftSection={<ExitIcon />}
+                    >
+                      {isLeaving ? "กำลังออกจากกลุ่ม..." : "ออกจากกลุ่ม"}
+                    </Menu.Item>
+                  )}
                 </Menu.Dropdown>
               </Menu>
             </div>
@@ -135,13 +235,13 @@ const AccountDetail = ({ accountId }) => {
                     <tr>
                       <td className="w-[18rem] md:w-[30rem]">ชื่อบัญชี</td>
                       <td className="w-[18rem] md:w-[30rem]">
-                        {data.account.name}
+                        {data.account?.name}
                       </td>
                     </tr>
                     <tr>
                       <td>เจ้าของบัญชี</td>
                       <td className="w-[18rem] md:w-[30rem]">
-                        {data.account?.owner}
+                        {data.account?.owner?.username}
                       </td>
                     </tr>
                     <tr>
@@ -186,6 +286,7 @@ const AccountDetail = ({ accountId }) => {
           <TransactionDataTable
             transactions={data?.transactions || []}
             isLoading={isLoading}
+            refetch={refetch}
           />
         </div>
       </div>

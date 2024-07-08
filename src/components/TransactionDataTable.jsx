@@ -12,14 +12,21 @@ import {
 import Link from "next/link";
 import moment from "moment";
 import Image from "next/image";
-import { Badge } from "@mantine/core";
+import { Badge, Button } from "@mantine/core";
 import { formatNumber } from "@/utils/formatNumber";
 import { useSession } from "next-auth/react";
+import { deleteTransaction } from "@/actions/transactionAction";
+import { notifications } from "@mantine/notifications";
 
 const PAGE_SIZES = [10, 15, 20];
 
-export default function TransactionDataTable({ transactions, isLoading }) {
+export default function TransactionDataTable({
+  transactions,
+  isLoading,
+  refetch,
+}) {
   const { data: session } = useSession();
+  const [isDeleting, setIsDeleting] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(PAGE_SIZES[1]);
   const [sortStatus, setSortStatus] = useState({
@@ -42,6 +49,37 @@ export default function TransactionDataTable({ transactions, isLoading }) {
       sortStatus.direction === "desc" ? dataSliced.reverse() : dataSliced
     );
   }, [page, pageSize, sortStatus, transactions]);
+
+  const handleDeleteTransaction = async (transactionId, name) => {
+    if (confirm(`ต้องการลบรายการ ${name} ใช่ไหม`)) {
+      setIsDeleting(true);
+      try {
+        const response = await deleteTransaction(transactionId);
+        if (response.error) {
+          notifications.show({
+            title: "เกิดข้อผิดพลาด",
+            message: response?.message || "ลบรายการไม่สำเร็จ",
+            color: "red",
+          });
+        } else {
+          refetch();
+          notifications.show({
+            title: "สำเร็จ",
+            message: response?.message || "ลบรายการสำเร็จ",
+            color: "green",
+          });
+        }
+      } catch (err) {
+        notifications.show({
+          title: "เกิดข้อผิดพลาด",
+          message: err?.message || "ลบรายการไม่สำเร็จ",
+          color: "red",
+        });
+      } finally {
+        setIsDeleting(false);
+      }
+    }
+  };
 
   return (
     <div className="pt-10">
@@ -124,14 +162,18 @@ export default function TransactionDataTable({ transactions, isLoading }) {
             render: (record) => (
               <div className="flex gap-x-3 justify-center">
                 {session.user._id === record.user._id && (
-                  <>
-                    <Link href={`/account/${record._id}`}>
-                      <Pencil2Icon className="w-5 h-5 cursor-pointer text-primary" />
-                    </Link>
-                    <Link href={`/account/${record._id}`}>
-                      <TrashIcon className="w-5 h-5 cursor-pointer text-red-500" />
-                    </Link>
-                  </>
+                  <Button
+                    loading={isDeleting}
+                    variant="transparent"
+                    radius="xl"
+                  >
+                    <TrashIcon
+                      onClick={() =>
+                        handleDeleteTransaction(record._id, record.name)
+                      }
+                      className="w-5 h-5 cursor-pointer text-red-500"
+                    />
+                  </Button>
                 )}
               </div>
             ),
