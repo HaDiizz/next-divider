@@ -30,8 +30,8 @@ export default function TransactionDataTable({
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(PAGE_SIZES[1]);
   const [sortStatus, setSortStatus] = useState({
-    columnAccessor: "name",
-    direction: "asc",
+    columnAccessor: "createdAt",
+    direction: "desc",
   });
   const [records, setRecords] = useState(transactions.slice(0, pageSize));
   useEffect(() => {
@@ -133,6 +133,12 @@ export default function TransactionDataTable({
             title: "ผู้รายงาน",
             sortable: true,
             render: (record) => record?.user?.username,
+          },
+          {
+            accessor: "createdAt",
+            title: "วันที่สร้างรายการ",
+            sortable: true,
+            render: (record) => moment(record?.createdAt).format("LLLL"),
           },
           {
             accessor: "image",
