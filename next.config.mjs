@@ -6,6 +6,9 @@ const nextConfig = {
   compiler: {
     styledComponents: true,
   },
+  env: {
+    BASE_URL: "https://bunchee.vercel.app",
+  },
 };
 
 export default withPWA({
