@@ -14,7 +14,7 @@ export default function Navbar() {
     >
       <Link href="/" className={`${session && "hidden md:block"}`}>
         <div className="flex items-center gap-2">
-          <h1 className="text-3xl font-bold text-primary">Divider </h1>
+          <h1 className="text-3xl font-bold text-primary">BUN CHEE </h1>
         </div>
       </Link>
       {session ? <ProfileMenu session={session} /> : <SignInButton />}
