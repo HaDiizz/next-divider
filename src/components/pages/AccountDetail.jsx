@@ -1,7 +1,6 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import BackButton from "../BackButton";
-import { MonthPickerInput } from "@mantine/dates";
 import { Loader, Menu, Paper, Text } from "@mantine/core";
 import moment from "moment";
 import "moment/locale/th";
@@ -28,7 +27,13 @@ const AccountDetail = ({ accountId }) => {
   const { data: session } = useSession();
   const [isLeaving, setIsLeaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [monthSelected, setMonthSelected] = useState("2024-07");
+  const [monthSelected, setMonthSelected] = useState(() => {
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+    const currentMonthYear = `${year}-${month}`;
+    return currentMonthYear;
+  });
   const { data, isLoading, refetch } = useQuery({
     queryFn: async () => await getTransactions(accountId, monthSelected),
     queryKey: ["transactions", accountId, monthSelected],
@@ -127,13 +132,11 @@ const AccountDetail = ({ accountId }) => {
         <BackButton />
         <div className="flex gap-x-3 items-center">
           <span className="text-primary">ข้อมูลเดือน</span>
-          {/* <MonthPickerInput
-            placeholder="Pick date"
+          <input
+            type="month"
             value={monthSelected}
-            onChange={setMonthSelected}
-          /> */}
-          <input type="month" id="start" name="start" value={monthSelected}  onChange={(e) => setMonthSelected(e.target.value)} />
-
+            onChange={(e) => setMonthSelected(e.target.value)}
+          />
         </div>
       </div>
       <div className="grid grid-cols-12 gap-5">

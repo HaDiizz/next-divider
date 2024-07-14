@@ -68,12 +68,9 @@ export async function getTransactions(accountId, date) {
       select: "username",
     });
     if (!validAccount) throw { message: "ไม่พบเจอข้อมูลบัญชีดังกล่าว" };
-    console.log(date);
-    const [year, month] = date.split("-").map(Number);
+    const [year, month] = date?.split("-")?.map(Number);
     const startDate = new Date(year, month - 1, 1);
     const endDate = new Date(year, month, 0);
-    console.log(startDate);
-    console.log(endDate);
     let transactions = await Transaction.find({
       account: validAccount._id,
       date: { $gte: startDate, $lte: endDate },
