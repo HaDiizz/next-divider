@@ -41,6 +41,7 @@ export default function AccountDataTable({ accounts }) {
   return (
     <div className="pt-10">
       <DataTable
+        pinLastColumn 
         height={400}
         className="table-auto"
         idAccessor={(record) => record._id}
