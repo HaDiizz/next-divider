@@ -80,6 +80,7 @@ export async function getTransactions(accountId, date = new Date()) {
         select: "username",
       })
       .lean();
+      console.log(startDate, endDate);
     transactions = transactions.map((transaction) => ({
       ...transaction,
       _id: transaction._id.toString(),
