@@ -49,7 +49,7 @@ export async function createTransaction(data) {
   }
 }
 
-export async function getTransactions(accountId, date = new Date()) {
+export async function getTransactions(accountId, date) {
   try {
     const session = await getServerSession(authOptions);
     if (!session) {
@@ -80,7 +80,6 @@ export async function getTransactions(accountId, date = new Date()) {
         select: "username",
       })
       .lean();
-      console.log(startDate, endDate);
     transactions = transactions.map((transaction) => ({
       ...transaction,
       _id: transaction._id.toString(),
