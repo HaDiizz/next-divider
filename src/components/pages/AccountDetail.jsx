@@ -28,7 +28,7 @@ const AccountDetail = ({ accountId }) => {
   const { data: session } = useSession();
   const [isLeaving, setIsLeaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [monthSelected, setMonthSelected] = useState(new Date());
+  const [monthSelected, setMonthSelected] = useState("2024-07");
   const { data, isLoading, refetch } = useQuery({
     queryFn: async () => await getTransactions(accountId, monthSelected),
     queryKey: ["transactions", accountId, monthSelected],
@@ -127,11 +127,13 @@ const AccountDetail = ({ accountId }) => {
         <BackButton />
         <div className="flex gap-x-3 items-center">
           <span className="text-primary">ข้อมูลเดือน</span>
-          <MonthPickerInput
+          {/* <MonthPickerInput
             placeholder="Pick date"
             value={monthSelected}
             onChange={setMonthSelected}
-          />
+          /> */}
+          <input type="month" id="start" name="start" value={monthSelected}  onChange={(e) => setMonthSelected(e.target.value)} />
+
         </div>
       </div>
       <div className="grid grid-cols-12 gap-5">
