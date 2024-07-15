@@ -19,6 +19,7 @@ import { notifications } from "@mantine/notifications";
 import { useSession } from "next-auth/react";
 import { deleteAccountGroup, leaveAccountGroup } from "@/actions/accountAction";
 import { useRouter } from "next/navigation";
+import strCurrentMonthYear from "@/utils/strCurrentMonthYear";
 
 moment.locale("th");
 
@@ -27,13 +28,7 @@ const AccountDetail = ({ accountId }) => {
   const { data: session } = useSession();
   const [isLeaving, setIsLeaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [monthSelected, setMonthSelected] = useState(() => {
-    const currentDate = new Date();
-    const year = currentDate.getFullYear();
-    const month = String(currentDate.getMonth() + 1).padStart(2, "0");
-    const currentMonthYear = `${year}-${month}`;
-    return currentMonthYear;
-  });
+  const [monthSelected, setMonthSelected] = useState(strCurrentMonthYear());
   const { data, isLoading, refetch } = useQuery({
     queryFn: async () => await getTransactions(accountId, monthSelected),
     queryKey: ["transactions", accountId, monthSelected],

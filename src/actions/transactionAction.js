@@ -6,6 +6,7 @@ import Account from "@/models/accountModel";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { getServerSession } from "next-auth/next";
 import { revalidatePath } from "next/cache";
+import strCurrentMonthYear from "@/utils/strCurrentMonthYear";
 
 export async function createTransaction(data) {
   try {
@@ -49,7 +50,7 @@ export async function createTransaction(data) {
   }
 }
 
-export async function getTransactions(accountId, date) {
+export async function getTransactions(accountId, date = strCurrentMonthYear()) {
   try {
     const session = await getServerSession(authOptions);
     if (!session) {
@@ -152,6 +153,7 @@ export async function deleteTransaction(transactionId) {
     await Account.findByIdAndUpdate(accountId, {
       $pull: { transactions: transactionId },
     });
+    revalidatePath(`/account/${accountId}`);
     return {
       success: true,
       message: "ลบรายการสำเร็จ",
