@@ -3,13 +3,7 @@
 import { DataTable } from "mantine-datatable";
 import sortBy from "lodash/sortBy";
 import { useEffect, useState } from "react";
-import {
-  ChevronUpIcon,
-  CaretSortIcon,
-  Pencil2Icon,
-  TrashIcon,
-} from "@radix-ui/react-icons";
-import Link from "next/link";
+import { ChevronUpIcon, CaretSortIcon, TrashIcon } from "@radix-ui/react-icons";
 import moment from "moment";
 import Image from "next/image";
 import { Badge, Button } from "@mantine/core";

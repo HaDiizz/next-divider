@@ -12,6 +12,7 @@ import { formatNumber } from "@/utils/formatNumber";
 import {
   DotsVerticalIcon,
   ExitIcon,
+  PersonIcon,
   Share1Icon,
   TrashIcon,
 } from "@radix-ui/react-icons";
@@ -20,12 +21,15 @@ import { useSession } from "next-auth/react";
 import { deleteAccountGroup, leaveAccountGroup } from "@/actions/accountAction";
 import { useRouter } from "next/navigation";
 import strCurrentMonthYear from "@/utils/strCurrentMonthYear";
+import { useDisclosure } from "@mantine/hooks";
+import MemberModal from "../MemberModal";
 
 moment.locale("th");
 
 const AccountDetail = ({ accountId }) => {
   const router = useRouter();
   const { data: session } = useSession();
+  const [opened, { open, close }] = useDisclosure(false);
   const [isLeaving, setIsLeaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [monthSelected, setMonthSelected] = useState(strCurrentMonthYear());
@@ -123,6 +127,7 @@ const AccountDetail = ({ accountId }) => {
   };
   return (
     <>
+      <MemberModal opened={opened} close={close} />
       <div className="flex justify-between py-5">
         <BackButton />
         <div className="flex gap-x-3 items-center">
@@ -195,6 +200,15 @@ const AccountDetail = ({ accountId }) => {
                 </Menu.Target>
                 <Menu.Dropdown>
                   <Menu.Label>Application</Menu.Label>
+                  {session &&
+                    session.user._id === data?.account?.owner?._id && (
+                      <Menu.Item
+                        onClick={() => open()}
+                        leftSection={<PersonIcon />}
+                      >
+                        สมาชิก
+                      </Menu.Item>
+                    )}
                   <Menu.Item
                     onClick={handleCopyLink}
                     leftSection={<Share1Icon />}
@@ -235,13 +249,13 @@ const AccountDetail = ({ accountId }) => {
                     <tr>
                       <td className="w-[18rem] md:w-[30rem]">ชื่อบัญชี</td>
                       <td className="w-[18rem] md:w-[30rem]">
-                        {data.account?.name}
+                        {data?.account?.name}
                       </td>
                     </tr>
                     <tr>
                       <td>เจ้าของบัญชี</td>
                       <td className="w-[18rem] md:w-[30rem]">
-                        {data.account?.owner?.username}
+                        {data?.account?.owner?.username}
                       </td>
                     </tr>
                     <tr>
