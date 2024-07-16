@@ -96,8 +96,9 @@ export default function MemberDataTable({
             render: (record) => (
               <Avatar
                 size="2rem"
-                src={`https://ui-avatars.com/api/?name=${record?.username}&&background=729af2&color=fff`}
                 radius="md"
+                name={record?.username}
+                color="initials"
               />
             ),
           },

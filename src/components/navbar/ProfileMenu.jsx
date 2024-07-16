@@ -4,10 +4,10 @@ import { Group, Avatar, Text, Menu, UnstyledButton } from "@mantine/core";
 import { signOut } from "next-auth/react";
 
 // eslint-disable-next-line react/display-name
-const UserButton = forwardRef(({ image, username, icon, ...others }, ref) => (
+const UserButton = forwardRef(({ username, icon, ...others }, ref) => (
   <UnstyledButton ref={ref} {...others}>
     <Group>
-      <Avatar size="2rem" src={image} radius="md" />
+      <Avatar size="2rem" name={username} color="initials" radius="md" />
       <div style={{ flex: 1 }}>
         <Text size="sm" fw={500}>
           {username}
@@ -24,10 +24,7 @@ export default function ProfileMenu({ session }) {
     <>
       <Menu withArrow>
         <Menu.Target>
-          <UserButton
-            image={`https://ui-avatars.com/api/?name=${session?.user?.username}&&background=729af2&color=fff`}
-            username={session?.user?.username}
-          />
+          <UserButton username={session?.user?.username} />
         </Menu.Target>
         <Menu.Dropdown>
           <Menu.Item
