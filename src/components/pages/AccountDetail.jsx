@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import BackButton from "../BackButton";
-import { Loader, Menu, Paper, Text } from "@mantine/core";
+import { Input, Loader, Menu, Paper, Text } from "@mantine/core";
 import moment from "moment";
 import "moment/locale/th";
 import TransactionDataTable from "../TransactionDataTable";
@@ -131,7 +131,7 @@ const AccountDetail = ({ accountId }) => {
       <div className="flex justify-between py-5">
         <BackButton />
         <div className="flex gap-x-3 items-center">
-          <input
+          <Input
             type="month"
             value={monthSelected}
             onChange={(e) => setMonthSelected(e.target.value)}
