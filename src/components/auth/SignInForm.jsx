@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { Button, TextInput, PasswordInput } from "@mantine/core";
+import { Button, TextInput, PasswordInput, useMantineColorScheme } from "@mantine/core";
 import Link from "next/link";
 import { isNotEmpty, useForm } from "@mantine/form";
 import { signIn } from "next-auth/react";
@@ -8,6 +8,7 @@ import { notifications } from "@mantine/notifications";
 import { useRouter } from "next/navigation";
 
 const SignInForm = () => {
+  const { colorScheme } = useMantineColorScheme();
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const router = useRouter();
   const form = useForm({
@@ -83,7 +84,12 @@ const SignInForm = () => {
           {...form.getInputProps("password")}
         />
         <span className="flex justify-end">
-          <Link className="text-primary pl-2" href={"/sign-up"}>
+          <Link
+            className={`${
+              colorScheme === "dark" ? "text-secondary" : "text-primary"
+            } pl-2`}
+            href={"/sign-up"}
+          >
             สร้างบัญชีใหม่
           </Link>
         </span>

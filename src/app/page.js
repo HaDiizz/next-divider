@@ -13,7 +13,7 @@ export default async function Home() {
   const data = await getAllAccounts();
   return (
     <div className="pt-[8rem] p-5 md:p-24">
-      <h1 className="font-bold text-neutral-500 py-3">รายการบัญชี</h1>
+      <h1 className="font-bold text-neutral-400 py-3">รายการบัญชี</h1>
       <CreateAccount />
       <AccountDataTable accounts={data?.accounts || []} />
     </div>

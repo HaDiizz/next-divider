@@ -131,7 +131,6 @@ const AccountDetail = ({ accountId }) => {
       <div className="flex justify-between py-5">
         <BackButton />
         <div className="flex gap-x-3 items-center">
-          <span className="text-primary">ข้อมูลเดือน</span>
           <input
             type="month"
             value={monthSelected}

@@ -10,6 +10,7 @@ import Providers from "@/provider/Provider";
 import { ColorSchemeScript } from "@mantine/core";
 import { authOptions } from "./api/auth/[...nextauth]/route";
 import { getServerSession } from "next-auth/next";
+import ActionToggleMode from "@/components/ActionToggleMode";
 
 const kanit = Kanit({
   subsets: ["latin"],
@@ -38,6 +39,7 @@ export default async function RootLayout({ children }) {
           <Navigation />
           <Notifications />
           <main>{children}</main>
+          <ActionToggleMode />
         </Providers>
       </body>
     </html>
