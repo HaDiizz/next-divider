@@ -23,6 +23,7 @@ import { useRouter } from "next/navigation";
 import strCurrentMonthYear from "@/utils/strCurrentMonthYear";
 import { useDisclosure } from "@mantine/hooks";
 import MemberModal from "../MemberModal";
+import { modals } from "@mantine/modals";
 
 moment.locale("th");
 
@@ -63,67 +64,87 @@ const AccountDetail = ({ accountId }) => {
       });
   };
 
-  const handleLeaveGroup = async () => {
-    if (confirm(`ต้องการออกจากบัญชี ${data?.account?.name} ใช่ไหม`)) {
-      setIsLeaving(true);
-      try {
-        const response = await leaveAccountGroup(accountId);
-        if (response.error) {
+  const handleLeaveGroup = () => {
+    modals.openConfirmModal({
+      title: "ออกจากกลุ่มบัญชี",
+      centered: true,
+      children: (
+        <Text size="sm">ต้องการออกจากบัญชี {data?.account?.name} ใช่ไหม</Text>
+      ),
+      labels: { confirm: "ยืนยันออกจากกลุ่ม", cancel: "ยกเลิก" },
+      confirmProps: { color: "red" },
+      onCancel: () => {},
+      onConfirm: async () => {
+        setIsLeaving(true);
+        try {
+          const response = await leaveAccountGroup(accountId);
+          if (response.error) {
+            notifications.show({
+              title: "เกิดข้อผิดพลาด",
+              message: response?.message || "ออกจากกลุ่ม/บัญชีไม่สำเร็จ",
+              color: "red",
+            });
+          } else {
+            refetch();
+            notifications.show({
+              title: "สำเร็จ",
+              message: response?.message || "ออกจากกลุ่ม/บัญชีสำเร็จ",
+              color: "green",
+            });
+            router.push("/");
+          }
+        } catch (err) {
           notifications.show({
             title: "เกิดข้อผิดพลาด",
-            message: response?.message || "ออกจากกลุ่ม/บัญชีไม่สำเร็จ",
+            message: err?.message || "ออกจากกลุ่ม/บัญชีไม่สำเร็จ",
             color: "red",
           });
-        } else {
-          refetch();
-          notifications.show({
-            title: "สำเร็จ",
-            message: response?.message || "ออกจากกลุ่ม/บัญชีสำเร็จ",
-            color: "green",
-          });
-          router.push("/");
+        } finally {
+          setIsLeaving(false);
         }
-      } catch (err) {
-        notifications.show({
-          title: "เกิดข้อผิดพลาด",
-          message: err?.message || "ออกจากกลุ่ม/บัญชีไม่สำเร็จ",
-          color: "red",
-        });
-      } finally {
-        setIsLeaving(false);
-      }
-    }
+      },
+    });
   };
   const handleDeleteGroup = async () => {
-    if (confirm(`ต้องการลบบัญชี ${data?.account?.name} ใช่ไหม`)) {
-      setIsDeleting(true);
-      try {
-        const response = await deleteAccountGroup(accountId);
-        if (response.error) {
+    modals.openConfirmModal({
+      title: "ลบบัญชี",
+      centered: true,
+      children: (
+        <Text size="sm">ต้องการลบบัญชี {data?.account?.name} ใช่ไหม</Text>
+      ),
+      labels: { confirm: "ยืนยันลบบัญชี", cancel: "ยกเลิก" },
+      confirmProps: { color: "red" },
+      onCancel: () => {},
+      onConfirm: async () => {
+        setIsDeleting(true);
+        try {
+          const response = await deleteAccountGroup(accountId);
+          if (response.error) {
+            notifications.show({
+              title: "เกิดข้อผิดพลาด",
+              message: response?.message || "ลบกลุ่ม/บัญชีไม่สำเร็จ",
+              color: "red",
+            });
+          } else {
+            refetch();
+            notifications.show({
+              title: "สำเร็จ",
+              message: response?.message || "ลบกลุ่ม/บัญชีสำเร็จ",
+              color: "green",
+            });
+            router.push("/");
+          }
+        } catch (err) {
           notifications.show({
             title: "เกิดข้อผิดพลาด",
-            message: response?.message || "ลบกลุ่ม/บัญชีไม่สำเร็จ",
+            message: err?.message || "ลบกลุ่ม/บัญชีไม่สำเร็จ",
             color: "red",
           });
-        } else {
-          refetch();
-          notifications.show({
-            title: "สำเร็จ",
-            message: response?.message || "ลบกลุ่ม/บัญชีสำเร็จ",
-            color: "green",
-          });
-          router.push("/");
+        } finally {
+          setIsDeleting(false);
         }
-      } catch (err) {
-        notifications.show({
-          title: "เกิดข้อผิดพลาด",
-          message: err?.message || "ลบกลุ่ม/บัญชีไม่สำเร็จ",
-          color: "red",
-        });
-      } finally {
-        setIsDeleting(false);
-      }
-    }
+      },
+    });
   };
   return (
     <>

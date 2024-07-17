@@ -2,6 +2,7 @@
 import AuthProvider from "./AuthProvider";
 import ReactQueryProvider from "./ReactQueryProvider";
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
+import { ModalsProvider } from "@mantine/modals";
 
 export default function Providers({ children, session }) {
   return (
@@ -26,7 +27,9 @@ export default function Providers({ children, session }) {
         }}
         defaultColorScheme="light"
       >
-        <ReactQueryProvider> {children}</ReactQueryProvider>
+        <ModalsProvider>
+          <ReactQueryProvider> {children}</ReactQueryProvider>
+        </ModalsProvider>
       </MantineProvider>
     </AuthProvider>
   );

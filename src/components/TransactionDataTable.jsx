@@ -6,11 +6,12 @@ import { useEffect, useState } from "react";
 import { ChevronUpIcon, CaretSortIcon, TrashIcon } from "@radix-ui/react-icons";
 import moment from "moment";
 import Image from "next/image";
-import { Badge, Button } from "@mantine/core";
+import { Badge, Button, Text } from "@mantine/core";
 import { formatNumber } from "@/utils/formatNumber";
 import { useSession } from "next-auth/react";
 import { deleteTransaction } from "@/actions/transactionAction";
 import { notifications } from "@mantine/notifications";
+import { modals } from "@mantine/modals";
 
 const PAGE_SIZES = [10, 15, 20];
 
@@ -45,34 +46,42 @@ export default function TransactionDataTable({
   }, [page, pageSize, sortStatus, transactions]);
 
   const handleDeleteTransaction = async (transactionId, name) => {
-    if (confirm(`ต้องการลบรายการ ${name} ใช่ไหม`)) {
-      setIsDeleting(true);
-      try {
-        const response = await deleteTransaction(transactionId);
-        if (response.error) {
+    modals.openConfirmModal({
+      title: "ลบรายการ",
+      centered: true,
+      children: <Text size="sm">ต้องการลบรายการ {name} ใช่ไหม</Text>,
+      labels: { confirm: "ยืนยันลบรายการ", cancel: "ยกเลิก" },
+      confirmProps: { color: "red" },
+      onCancel: () => {},
+      onConfirm: async () => {
+        setIsDeleting(true);
+        try {
+          const response = await deleteTransaction(transactionId);
+          if (response.error) {
+            notifications.show({
+              title: "เกิดข้อผิดพลาด",
+              message: response?.message || "ลบรายการไม่สำเร็จ",
+              color: "red",
+            });
+          } else {
+            refetch();
+            notifications.show({
+              title: "สำเร็จ",
+              message: response?.message || "ลบรายการสำเร็จ",
+              color: "green",
+            });
+          }
+        } catch (err) {
           notifications.show({
             title: "เกิดข้อผิดพลาด",
-            message: response?.message || "ลบรายการไม่สำเร็จ",
+            message: err?.message || "ลบรายการไม่สำเร็จ",
             color: "red",
           });
-        } else {
-          refetch();
-          notifications.show({
-            title: "สำเร็จ",
-            message: response?.message || "ลบรายการสำเร็จ",
-            color: "green",
-          });
+        } finally {
+          setIsDeleting(false);
         }
-      } catch (err) {
-        notifications.show({
-          title: "เกิดข้อผิดพลาด",
-          message: err?.message || "ลบรายการไม่สำเร็จ",
-          color: "red",
-        });
-      } finally {
-        setIsDeleting(false);
-      }
-    }
+      },
+    });
   };
 
   return (
