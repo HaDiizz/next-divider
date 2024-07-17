@@ -41,7 +41,7 @@ export default function AccountDataTable({ accounts }) {
   return (
     <div className="pt-10">
       <DataTable
-        pinLastColumn 
+        pinLastColumn
         height={400}
         className="table-auto"
         idAccessor={(record) => record._id}
@@ -75,7 +75,7 @@ export default function AccountDataTable({ accounts }) {
             render: (record) => (
               <div className="flex justify-center">
                 <Link href={`/account/${record._id}`}>
-                  <EyeOpenIcon className="w-5 h-5 cursor-pointer text-primary" />
+                  <EyeOpenIcon className="w-5 h-5 cursor-pointer text-primary dark:text-secondary" />
                 </Link>
               </div>
             ),
