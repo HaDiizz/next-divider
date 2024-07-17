@@ -167,7 +167,7 @@ const AccountDetail = ({ accountId }) => {
         <div className="col-span-12 md:col-span-6 lg:col-span-3">
           <Paper shadow="xs" withBorder p="xl" className="h-full">
             <Text gradient={{ from: "indigo", to: "blue", deg: 87 }}>
-              มูลค่าในเดือน {moment(monthSelected).format("MMMM YYYY")}
+              มูลค่าในเดือนนี้
             </Text>
             <div className="flex justify-center pt-5">
               {isLoading ? (
