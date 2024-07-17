@@ -20,10 +20,8 @@ const kanit = Kanit({
 
 export const metadata = {
   title: "BUN CHEE",
-  description: {
-    th: "แอป BUN CHEE คือเครื่องมือที่ช่วยให้คุณบันทึกและติดตามรายรับรายจ่ายในแต่ละวันได้อย่างง่ายดาย สามารถเพิ่มบุคคลอื่นในบัญชีเพื่อใช้งานร่วมกันได้ (บัญชีร่วม) คุณสามารถดูข้อมูลและวิเคราะห์การใช้จ่ายรายเดือนได้ในที่เดียว แอปนี้ออกแบบมาเพื่อให้การจัดการการเงินส่วนบุคคลของคุณเป็นเรื่องง่ายและมีประสิทธิภาพมากยิ่งขึ้น",
-    en: "The BUN CHEE app is a tool that helps you easily record and track your daily income and expenses. You can add other people to share the account (joint account) and view monthly financial data and analysis in one place. This app is designed to make your personal finance management simpler and more efficient.",
-  },
+  description:
+    "แอป BUN CHEE คือเครื่องมือที่ช่วยให้คุณบันทึกและติดตามรายรับรายจ่ายในแต่ละวันได้อย่างง่ายดาย สามารถเพิ่มบุคคลอื่นในบัญชีเพื่อใช้งานร่วมกันได้ (บัญชีร่วม) คุณสามารถดูข้อมูลและวิเคราะห์การใช้จ่ายรายเดือนได้ในที่เดียว แอปนี้ออกแบบมาเพื่อให้การจัดการการเงินส่วนบุคคลของคุณเป็นเรื่องง่ายและมีประสิทธิภาพมากยิ่งขึ้น, The BUN CHEE app is a tool that helps you easily record and track your daily income and expenses. You can add other people to share the account (joint account) and view monthly financial data and analysis in one place. This app is designed to make your personal finance management simpler and more efficient.",
   manifest: "/manifest.json",
 };
 
