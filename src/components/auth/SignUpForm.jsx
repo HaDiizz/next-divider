@@ -1,18 +1,12 @@
 "use client";
 import React from "react";
-import {
-  Button,
-  TextInput,
-  PasswordInput,
-  useMantineColorScheme,
-} from "@mantine/core";
+import { Button, TextInput, PasswordInput } from "@mantine/core";
 import Link from "next/link";
 import { isNotEmpty, useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import { signUpAction } from "@/actions/authAction";
 
 const SignUpForm = () => {
-  const { colorScheme } = useMantineColorScheme();
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const form = useForm({
     mode: "uncontrolled",
@@ -103,9 +97,7 @@ const SignUpForm = () => {
         />
         <span className="flex justify-end">
           <Link
-            className={`${
-              colorScheme === "dark" ? "text-secondary" : "text-primary"
-            } pl-2`}
+            className={`dark:text-secondary text-primary pl-2`}
             href={"/sign-in"}
           >
             ลงชื่อเข้าใช้งาน
