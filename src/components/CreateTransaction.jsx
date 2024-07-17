@@ -1,15 +1,63 @@
 "use client";
 import React from "react";
-import { Autocomplete, Button, Modal, Select, TextInput } from "@mantine/core";
+import {
+  ActionIcon,
+  Autocomplete,
+  Button,
+  Modal,
+  Select,
+  TextInput,
+} from "@mantine/core";
 import { isNotEmpty, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-import { createAccount } from "@/actions/accountAction";
 import { notifications } from "@mantine/notifications";
 import { DateInput } from "@mantine/dates";
 import { createTransaction } from "@/actions/transactionAction";
+import CloseMicroPhone from "./icons/CloseMicroPhone";
+import OpenMicroPhone from "./icons/OpenMicroPhone";
 
 const CreateTransaction = ({ accountId, refetch }) => {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [isOpenMicTransactionName, setIsOpenMicTransactionName] =
+    React.useState(false);
+  const [isOpenMicRemark, setIsOpenMicRemark] = React.useState(false);
+  const [isOpenMicCategory, setIsOpenMicCategory] = React.useState(false);
+  const [recognition, setRecognition] = React.useState(null);
+
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      const SpeechRecognition =
+        window.SpeechRecognition || window.webkitSpeechRecognition;
+      const recognitionInstance = new SpeechRecognition();
+      recognitionInstance.lang = "th-TH";
+      recognitionInstance.continuous = true;
+      recognitionInstance.interimResults = true;
+
+      recognitionInstance.onresult = (event) => {
+        const currentTranscript = Array.from(event.results)
+          .map((result) => result[0])
+          .map((result) => result.transcript)
+          .join("");
+        if (isOpenMicTransactionName) {
+          form.setFieldValue("name", currentTranscript);
+        } else if (isOpenMicRemark) {
+          form.setFieldValue("remark", currentTranscript);
+        } else if (isOpenMicCategory) {
+          form.setFieldValue("category", currentTranscript);
+        }
+      };
+
+      recognitionInstance.onend = () => {
+        if (isOpenMicTransactionName || isOpenMicRemark || isOpenMicCategory) {
+          recognitionInstance.start();
+        } else {
+          recognitionInstance.stop();
+        }
+      };
+
+      setRecognition(recognitionInstance);
+    }
+  }, []);
   const [opened, { open, close }] = useDisclosure(false);
   const form = useForm({
     mode: "uncontrolled",
@@ -79,6 +127,44 @@ const CreateTransaction = ({ accountId, refetch }) => {
       form.reset();
     }
   };
+
+  const handleOpenMic = (field) => {
+    if (field === "name") {
+      setIsOpenMicTransactionName(true);
+      setIsOpenMicCategory(false);
+      setIsOpenMicRemark(false);
+    } else if (field === "remark") {
+      setIsOpenMicRemark(true);
+      setIsOpenMicCategory(false);
+      setIsOpenMicTransactionName(false);
+    } else if (field === "category") {
+      setIsOpenMicCategory(true);
+      setIsOpenMicRemark(false);
+      setIsOpenMicTransactionName(false);
+    }
+    recognition.onresult = async function (event) {
+      const transcript = Array.from(event.results)
+        .map((result) => result[0])
+        .map((result) => result.transcript)
+        .join(" ");
+      if (field === "name") {
+        form.setFieldValue("name", transcript);
+      } else if (field === "remark") {
+        form.setFieldValue("remark", transcript);
+      } else if (field === "category") {
+        form.setFieldValue("category", transcript);
+      }
+    };
+    recognition.start();
+  };
+
+  const handleCloseMic = () => {
+    setIsOpenMicTransactionName(false);
+    setIsOpenMicRemark(false);
+    setIsOpenMicCategory(false);
+    recognition.stop();
+  };
+
   return (
     <>
       <Modal.Root
@@ -102,6 +188,22 @@ const CreateTransaction = ({ accountId, refetch }) => {
             >
               <TextInput
                 withAsterisk
+                rightSection={
+                  <ActionIcon
+                    size="md"
+                    aria-label="microphone speech to text transaction name"
+                    variant="transparent"
+                    disabled={isOpenMicCategory || isOpenMicRemark}
+                  >
+                    {!isOpenMicTransactionName ? (
+                      <CloseMicroPhone
+                        handleOnClick={() => handleOpenMic("name")}
+                      />
+                    ) : (
+                      <OpenMicroPhone handleOnClick={handleCloseMic} />
+                    )}
+                  </ActionIcon>
+                }
                 variant="filled"
                 size="md"
                 radius="md"
@@ -134,6 +236,22 @@ const CreateTransaction = ({ accountId, refetch }) => {
               />
               <Autocomplete
                 withAsterisk
+                rightSection={
+                  <ActionIcon
+                    size="md"
+                    aria-label="microphone speech to text category"
+                    variant="transparent"
+                    disabled={isOpenMicRemark || isOpenMicTransactionName}
+                  >
+                    {!isOpenMicCategory ? (
+                      <CloseMicroPhone
+                        handleOnClick={() => handleOpenMic("category")}
+                      />
+                    ) : (
+                      <OpenMicroPhone handleOnClick={handleCloseMic} />
+                    )}
+                  </ActionIcon>
+                }
                 variant="filled"
                 size="md"
                 radius="md"
@@ -158,6 +276,22 @@ const CreateTransaction = ({ accountId, refetch }) => {
               />
               <TextInput
                 variant="filled"
+                rightSection={
+                  <ActionIcon
+                    size="md"
+                    aria-label="microphone speech to text remark"
+                    variant="transparent"
+                    disabled={isOpenMicCategory || isOpenMicTransactionName}
+                  >
+                    {!isOpenMicRemark ? (
+                      <CloseMicroPhone
+                        handleOnClick={() => handleOpenMic("remark")}
+                      />
+                    ) : (
+                      <OpenMicroPhone handleOnClick={handleCloseMic} />
+                    )}
+                  </ActionIcon>
+                }
                 size="md"
                 radius="md"
                 placeholder="หมายเหตุเพิ่มเติม"
