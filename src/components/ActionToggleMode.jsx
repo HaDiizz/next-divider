@@ -10,7 +10,7 @@ const ActionToggleMode = () => {
   const { setColorScheme } = useMantineColorScheme({
     keepTransitions: true,
   });
-  const computedColorScheme = useComputedColorScheme("dark");
+  const computedColorScheme = useComputedColorScheme("light");
 
   return (
     <div className="fixed bottom-5 right-5 z-50">

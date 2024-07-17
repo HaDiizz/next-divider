@@ -7,10 +7,10 @@ import "mantine-datatable/styles.layer.css";
 import { Notifications } from "@mantine/notifications";
 import Navigation from "@/components/navbar/Navigation";
 import Providers from "@/provider/Provider";
-import { ColorSchemeScript } from "@mantine/core";
 import { authOptions } from "./api/auth/[...nextauth]/route";
 import { getServerSession } from "next-auth/next";
 import ActionToggleMode from "@/components/ActionToggleMode";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const kanit = Kanit({
   subsets: ["latin"],
@@ -31,11 +31,10 @@ export default async function RootLayout({ children }) {
   const session = await getServerSession(authOptions);
   return (
     <html lang="en">
-      <head>
-        <ColorSchemeScript />
-      </head>
+      <head></head>
       <body className={kanit.className}>
         <Providers session={session}>
+          <SpeedInsights />
           <Navigation />
           <Notifications />
           <main>{children}</main>
