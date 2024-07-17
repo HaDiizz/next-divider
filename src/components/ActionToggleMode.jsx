@@ -24,15 +24,11 @@ const ActionToggleMode = () => {
         aria-label="Toggle color scheme"
       >
         <SunIcon
-          className={`${
-            computedColorScheme === "dark" ? "block" : "hidden"
-          } w-[18px] h-[18px]`}
+          className={`dark:block hidden w-[18px] h-[18px]`}
           stroke={1.5}
         />
         <MoonIcon
-          className={`${
-            computedColorScheme === "dark" ? "hidden" : "block"
-          } w-[18px] h-[18px]`}
+          className={`dark:hidden block w-[18px] h-[18px]`}
           stroke={1.5}
         />
       </ActionIcon>
