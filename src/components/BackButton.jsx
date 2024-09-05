@@ -2,6 +2,7 @@
 
 import { Button } from "@mantine/core";
 import { useRouter } from "next/navigation";
+import { nprogress } from "@mantine/nprogress";
 
 const BackButton = () => {
   const router = useRouter();
@@ -12,7 +13,10 @@ const BackButton = () => {
         radius="md"
         className="bg-primary"
         variant="light"
-        onClick={() => router.back()}
+        onClick={() => {
+          nprogress.start();
+          router.back();
+        }}
       >
         ย้อนกลับ
       </Button>

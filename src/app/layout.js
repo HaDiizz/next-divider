@@ -4,6 +4,7 @@ import "@mantine/core/styles.css";
 import "@mantine/dates/styles.css";
 import "@mantine/notifications/styles.css";
 import "mantine-datatable/styles.layer.css";
+import "@mantine/nprogress/styles.css";
 import { Notifications } from "@mantine/notifications";
 import Navigation from "@/components/navbar/Navigation";
 import Providers from "@/provider/Provider";
@@ -11,6 +12,8 @@ import { authOptions } from "./api/auth/[...nextauth]/route";
 import { getServerSession } from "next-auth/next";
 import ActionToggleMode from "@/components/ActionToggleMode";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { NavigationProgress } from "@mantine/nprogress";
+import ProgressLoader from "@/components/ProgressLoader";
 
 const kanit = Kanit({
   subsets: ["latin"],
@@ -32,6 +35,8 @@ export default async function RootLayout({ children }) {
       <head></head>
       <body className={kanit.className}>
         <Providers session={session}>
+          <ProgressLoader />
+          <NavigationProgress color="#729af2" size={5} />
           <SpeedInsights />
           <Navigation />
           <Notifications />
