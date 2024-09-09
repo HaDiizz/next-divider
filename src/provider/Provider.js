@@ -10,6 +10,7 @@ export default function Providers({ children, session }) {
       <ColorSchemeScript defaultColorScheme="light" />
       <MantineProvider
         theme={{
+          cursorType: "pointer",
           colors: {
             dark: [
               "#d5d7e0",

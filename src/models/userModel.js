@@ -13,6 +13,11 @@ const userSchema = new mongoose.Schema(
       trim: true,
       required: true,
     },
+    secretKey: {
+      type: String,
+      trim: true,
+      required: true,
+    },
     sharedAccounts: [
       {
         type: mongoose.Types.ObjectId,

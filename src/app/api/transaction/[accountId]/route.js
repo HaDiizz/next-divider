@@ -44,7 +44,7 @@ export const POST = async (_, context) => {
     return NextResponse.json({ transactions, totalAmount });
   } catch (err) {
     console.log(err);
-    NextResponse.json(
+    return NextResponse.json(
       { message: err.message || "Internal Server Error" },
       { status: err.code || 500 }
     );

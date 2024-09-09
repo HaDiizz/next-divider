@@ -88,7 +88,7 @@ const CreateTransaction = ({ accountId, refetch }) => {
       category: isNotEmpty("กรุณากรอกหมวดหมู่ของรายการ"),
       amount: (value) =>
         value
-          ? value < 1
+          ? value < 0
             ? "จำนวนค่าใช้จ่าย/รายได้ ต้องมากกว่า 0 บาท"
             : null
           : "กรุณากรอกค่าใช้จ่าย/รายได้",

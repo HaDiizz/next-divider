@@ -2,6 +2,9 @@ import { forwardRef } from "react";
 import { ChevronDownIcon, ExitIcon } from "@radix-ui/react-icons";
 import { Group, Avatar, Text, Menu, UnstyledButton } from "@mantine/core";
 import { signOut } from "next-auth/react";
+import ChartMixedDollar from "../icons/ChartMixedDollar";
+import Link from "next/link";
+import { nprogress } from "@mantine/nprogress";
 
 // eslint-disable-next-line react/display-name
 const UserButton = forwardRef(({ username, icon, ...others }, ref) => (
@@ -27,6 +30,16 @@ export default function ProfileMenu({ session }) {
           <UserButton username={session?.user?.username} />
         </Menu.Target>
         <Menu.Dropdown>
+          <Link className="w-full h-full" href="/investment">
+            <Menu.Item
+              onClick={() => {
+                nprogress.start();
+              }}
+              leftSection={<ChartMixedDollar className="w-4 h-4" />}
+            >
+              investment
+            </Menu.Item>
+          </Link>
           <Menu.Item
             onClick={async () => {
               await signOut({ callbackUrl: "/sign-in" });
