@@ -1,15 +1,13 @@
 import connectDB from "@/lib/connectDB";
 import { NextResponse } from "next/server";
 import User from "@/models/userModel";
-import Order from "@/models/orderModel";
 import Asset from "@/models/assetModel";
 
 export const dynamic = "force-dynamic";
 
-export const POST = async (request) => {
+export const GET = async (request) => {
   try {
     const secretKey = request.headers?.get("Secret-Key");
-    const form = await request.json();
 
     await connectDB();
     let validUser = await User.findOne({
@@ -17,24 +15,12 @@ export const POST = async (request) => {
     });
     if (!validUser) throw { code: 403, message: "Forbidden" };
     validUser = validUser.toObject();
-    const isAssetExist = await Asset.findOne({ symbol: form.symbol });
-    if (!isAssetExist) throw { code: 400, message: "Asset does not exist." };
-    if (
-      !form.symbol ||
-      !form.assetType ||
-      !form.quantity ||
-      !form.open ||
-      !validUser._id.toString()
-    )
-      throw { code: 400, message: "Field are required." };
-    const newOrder = new Order({
-      ...form,
+    const assets = await Asset.find({
       user: validUser._id.toString(),
-    });
+      isFixed: false,
+    }).select("symbol assetType");
 
-    await newOrder.save();
-
-    return NextResponse.json({ status: 200 });
+    return NextResponse.json({ status: 200, assets });
   } catch (err) {
     console.log(err);
     return NextResponse.json(
