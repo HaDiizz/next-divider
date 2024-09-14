@@ -6,7 +6,6 @@ import { revalidatePath } from "next/cache";
 import Asset from "@/models/assetModel";
 import Order from "@/models/orderModel";
 import { getRefreshToken } from "./authAction";
-import { getCurrentPrice } from "@/utils/getCurrentPrice";
 
 export async function createAsset({ data }) {
   try {
@@ -200,17 +199,6 @@ export async function getOrders() {
     for (let order of orders) {
       order._id = order._id.toString();
       order.user = order.user.toString();
-
-      if (order.status === "open") {
-        const currentPrice = await getCurrentPrice(order.symbol);
-        order.profitLoss = (currentPrice - order.open) * order.quantity;
-        order.profitLossPercentage =
-          ((currentPrice - order.open) / order.open) * 100;
-      } else {
-        order.profitLoss = (order.close - order.open) * order.quantity;
-        order.profitLossPercentage =
-          ((order.close - order.open) / order.open) * 100;
-      }
     }
 
     return {

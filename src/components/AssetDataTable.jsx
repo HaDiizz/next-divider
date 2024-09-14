@@ -177,8 +177,8 @@ export default function AssetDataTable({ assets, orders }) {
         onRecordsPerPageChange={setPageSize}
         records={records.map((asset) => ({
           ...asset,
-          profitLossRealtime: calculateProfitLoss(asset),
-          totalValueRealtime: calculateTotalValue(asset),
+          profitLoss: calculateProfitLoss(asset),
+          totalValue: calculateTotalValue(asset),
           profitLossPercentage: calculateProfitLossPercentage(asset),
         }))}
         columns={[
@@ -216,8 +216,8 @@ export default function AssetDataTable({ assets, orders }) {
             render: (record) => (
               <span>
                 {realTimePrices[record.symbol]
-                  ? record.totalValueRealtime
-                    ? record.totalValueRealtime.toFixed(2)
+                  ? record.totalValue
+                    ? record.totalValue.toFixed(2)
                     : 0
                   : "Loading..."}
               </span>
@@ -230,14 +230,12 @@ export default function AssetDataTable({ assets, orders }) {
             render: (record) => (
               <span
                 className={`transition-colors duration-500 ${
-                  record.profitLossRealtime > 0
-                    ? "text-green-500"
-                    : "text-red-500"
+                  record.profitLoss > 0 ? "text-green-500" : "text-red-500"
                 }`}
               >
                 {realTimePrices[record.symbol]
-                  ? record.profitLossRealtime
-                    ? record.profitLossRealtime.toFixed(2)
+                  ? record.profitLoss
+                    ? record.profitLoss.toFixed(2)
                     : 0
                   : "Loading..."}
               </span>

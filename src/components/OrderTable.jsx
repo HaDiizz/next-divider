@@ -3,10 +3,11 @@ import { DataTable } from "mantine-datatable";
 import sortBy from "lodash/sortBy";
 import { useEffect, useState } from "react";
 import { ChevronUpIcon, CaretSortIcon, TrashIcon } from "@radix-ui/react-icons";
-import { Button, Text } from "@mantine/core";
+import { Badge, Button, Text } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { modals } from "@mantine/modals";
 import { deleteOrder } from "@/actions/investmentAction";
+import { useBinanceWebSocket } from "@/hooks/useBinanceWebSocket";
 
 const PAGE_SIZES = [10, 15, 20];
 
@@ -19,6 +20,10 @@ export default function OrderTable({ orders }) {
     direction: "asc",
   });
   const [records, setRecords] = useState(orders.slice(0, pageSize));
+
+  const symbols = orders.map((order) => order.symbol);
+
+  const { realTimePrices } = useBinanceWebSocket(symbols);
 
   useEffect(() => {
     setPage(1);
@@ -74,6 +79,22 @@ export default function OrderTable({ orders }) {
     });
   };
 
+  const calculateProfitLoss = (order) => {
+    if (order.status === "open") {
+      const currentPrice = realTimePrices[order.symbol] || 0;
+      return (currentPrice - order.open) * order.quantity;
+    }
+    return (order.close - order.open) * order.quantity;
+  };
+
+  const calculateProfitLossPercentage = (order) => {
+    if (order.status === "open") {
+      const currentPrice = realTimePrices[order.symbol] || 0;
+      return ((currentPrice - order.open) / order.open) * 100;
+    }
+    return ((order.close - order.open) / order.open) * 100;
+  };
+
   return (
     <div className="pt-10">
       <DataTable
@@ -89,9 +110,18 @@ export default function OrderTable({ orders }) {
         onPageChange={(p) => setPage(p)}
         recordsPerPageOptions={PAGE_SIZES}
         onRecordsPerPageChange={setPageSize}
-        records={records}
+        records={records.map((order) => ({
+          ...order,
+          profitLoss: calculateProfitLoss(order),
+          profitLossPercentage: calculateProfitLossPercentage(order),
+        }))}
         columns={[
-          { accessor: "orderId", title: "Order ID", sortable: true },
+          {
+            accessor: "orderId",
+            title: "Order ID",
+            sortable: true,
+            render: (record) => record?.orderId || "-",
+          },
           { accessor: "symbol", title: "สินทรัพย์", sortable: true },
           {
             accessor: "assetType",
@@ -112,11 +142,17 @@ export default function OrderTable({ orders }) {
             accessor: "close",
             title: "ราคาปิด (USD)",
             sortable: true,
+            render: (record) => record?.close || "-",
           },
           {
             accessor: "status",
             title: "สถานะ",
             sortable: true,
+            render: (record) => (
+              <Badge color={`${record?.status === "open" ? "green" : "red"}`}>
+                {record?.status}
+              </Badge>
+            ),
           },
           {
             accessor: "profitLoss",
@@ -128,11 +164,13 @@ export default function OrderTable({ orders }) {
                   record.profitLoss > 0 ? "text-green-500" : "text-red-500"
                 }`}
               >
-                {record.profitLoss === 0
-                  ? 0
-                  : record.profitLoss
-                  ? record.profitLoss.toFixed(2)
-                  : "-"}
+                {realTimePrices[record.symbol]
+                  ? record.profitLoss === 0
+                    ? 0
+                    : record.profitLoss
+                    ? record.profitLoss.toFixed(2)
+                    : "-"
+                  : "Loading..."}
               </span>
             ),
           },
@@ -148,11 +186,13 @@ export default function OrderTable({ orders }) {
                     : "text-red-500"
                 }`}
               >
-                {record.profitLossPercentage === 0
-                  ? `0.00%`
-                  : record.profitLossPercentage
-                  ? `${record.profitLossPercentage.toFixed(2)}%`
-                  : "-"}
+                {realTimePrices[record.symbol]
+                  ? record.profitLossPercentage === 0
+                    ? `0.00%`
+                    : record.profitLossPercentage
+                    ? `${record.profitLossPercentage.toFixed(2)}%`
+                    : "-"
+                  : "Loading..."}
               </span>
             ),
           },
