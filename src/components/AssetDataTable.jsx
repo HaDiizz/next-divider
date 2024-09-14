@@ -190,10 +190,10 @@ export default function AssetDataTable({ assets, orders }) {
             sortable: true,
             render: (record) => (
               <span>
-                {record.totalValue === 0
-                  ? 0
-                  : record.totalValueRealtime
-                  ? record.totalValueRealtime.toFixed(2)
+                {realTimePrices[record.symbol]
+                  ? record.totalValueRealtime
+                    ? record.totalValueRealtime.toFixed(2)
+                    : 0
                   : "Loading..."}
               </span>
             ),
@@ -208,10 +208,10 @@ export default function AssetDataTable({ assets, orders }) {
                   record.profitLoss > 0 ? "text-green-500" : "text-red-500"
                 }`}
               >
-                {record.profitLoss === 0
-                  ? 0
-                  : record.profitLossRealtime
-                  ? record.profitLossRealtime.toFixed(2)
+                {realTimePrices[record.symbol]
+                  ? record.profitLossRealtime
+                    ? record.profitLossRealtime.toFixed(2)
+                    : 0
                   : "Loading..."}
               </span>
             ),

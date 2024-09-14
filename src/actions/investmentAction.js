@@ -6,7 +6,6 @@ import { revalidatePath } from "next/cache";
 import Asset from "@/models/assetModel";
 import Order from "@/models/orderModel";
 import { getRefreshToken } from "./authAction";
-import { getCurrentPrice } from "@/utils/getCurrentPrice";
 
 export async function createAsset({ data }) {
   try {
@@ -69,8 +68,6 @@ export async function getAssets() {
 
       let totalQuantity = 0;
       let totalBuyValue = 0;
-      let profitLoss = 0;
-      let totalValue = 0;
 
       for (let order of orders) {
         totalQuantity += order.quantity;
@@ -81,26 +78,9 @@ export async function getAssets() {
       asset.averageBuyPrice =
         totalQuantity > 0 ? totalBuyValue / totalQuantity : 0;
 
-      const currentPrice = await getCurrentPrice(asset.symbol);
-
-      for (let order of orders) {
-        const orderPrice =
-          order.status === "closed" ? order.close : currentPrice;
-        const orderValue = orderPrice * order.quantity;
-        const orderPL = (orderPrice - order.open) * order.quantity;
-
-        totalValue += orderValue;
-        profitLoss += orderPL;
-      }
-
-      asset.profitLoss = profitLoss;
-      asset.totalValue = totalValue;
-
       await Asset.updateOne(
         { _id: asset._id },
         {
-          profitLoss,
-          totalValue,
           quantity: asset.quantity,
           averageBuyPrice: asset.averageBuyPrice,
         }
@@ -175,7 +155,7 @@ export async function updateFixedAsset(assetId, isFixed) {
   }
 }
 
-export async function getSymbols() {
+export async function getSymbols(assetType) {
   try {
     const session = await getServerSession(authOptions);
     if (!session) {
@@ -185,6 +165,7 @@ export async function getSymbols() {
 
     const symbols = await Asset.find({
       user: session.user._id,
+      assetType,
     })
       .select("symbol")
       .lean();
@@ -255,14 +236,19 @@ export async function createOrder({ data }) {
 
     await connectDB();
     const { key } = await getRefreshToken();
-    const response = await fetch(process.env.BASE_URL ? `${process.env.BASE_URL}/api/order` : `http://localhost:3000/api/order`, {
-      method: "post",
-      headers: {
-        "Content-Type": "application/json",
-        "Secret-Key": key,
-      },
-      body: JSON.stringify(data),
-    });
+    const response = await fetch(
+      process.env.BASE_URL
+        ? `${process.env.BASE_URL}/api/order`
+        : `http://localhost:3000/api/order`,
+      {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+          "Secret-Key": key,
+        },
+        body: JSON.stringify(data),
+      }
+    );
     const result = await response.json();
     if (result.status !== 200)
       throw {

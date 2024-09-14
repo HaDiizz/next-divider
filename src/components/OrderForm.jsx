@@ -1,25 +1,10 @@
 "use client";
 import React from "react";
-import {
-  Autocomplete,
-  Button,
-  Checkbox,
-  Group,
-  Loader,
-  Select,
-  TextInput,
-} from "@mantine/core";
+import { Autocomplete, Button, Loader, Select, TextInput } from "@mantine/core";
 import { isNotEmpty, useForm } from "@mantine/form";
-import Image from "next/image";
-import { CheckIcon } from "@radix-ui/react-icons";
 import { notifications } from "@mantine/notifications";
-import {
-  createAsset,
-  createOrder,
-  getSymbols,
-} from "@/actions/investmentAction";
+import { createOrder, getSymbols } from "@/actions/investmentAction";
 import { useQuery } from "@tanstack/react-query";
-import { fetchSymbols } from "@/services/assetService";
 
 const symbolsFilter = ({ options, search }) => {
   const filtered = options.filter((option) =>
@@ -38,7 +23,7 @@ const OrderForm = ({ close }) => {
     isLoading: IsLoadingSymbols,
     refetch,
   } = useQuery({
-    queryFn: async () => await getSymbols(),
+    queryFn: async () => await getSymbols(assetType),
     queryKey: ["symbols"],
     enabled: false,
   });

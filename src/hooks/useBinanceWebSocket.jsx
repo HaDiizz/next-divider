@@ -9,7 +9,7 @@ export const useBinanceWebSocket = (symbols) => {
     if (symbols.length === 0) return;
 
     const streamName = symbols
-      .map((symbol) => `${symbol.toLowerCase()}@ticker`)
+      .map((symbol) => `${symbol.toLowerCase()}@miniTicker`)
       .join("/");
     const ws = new WebSocket(
       `wss://stream.binance.com:9443/stream?streams=${streamName}`

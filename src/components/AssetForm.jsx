@@ -1,16 +1,7 @@
 "use client";
 import React from "react";
-import {
-  Autocomplete,
-  Button,
-  Checkbox,
-  Group,
-  Loader,
-  Select,
-} from "@mantine/core";
+import { Autocomplete, Button, Checkbox, Loader, Select } from "@mantine/core";
 import { isNotEmpty, useForm } from "@mantine/form";
-import Image from "next/image";
-import { CheckIcon } from "@radix-ui/react-icons";
 import { notifications } from "@mantine/notifications";
 import { createAsset } from "@/actions/investmentAction";
 import { useQuery } from "@tanstack/react-query";

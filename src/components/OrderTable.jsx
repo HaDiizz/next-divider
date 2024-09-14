@@ -3,16 +3,10 @@ import { DataTable } from "mantine-datatable";
 import sortBy from "lodash/sortBy";
 import { useEffect, useState } from "react";
 import { ChevronUpIcon, CaretSortIcon, TrashIcon } from "@radix-ui/react-icons";
-import { Button, Switch, Text } from "@mantine/core";
-import { useBinanceWebSocket } from "@/hooks/useBinanceWebSocket";
-import { getColorChangeClass } from "@/utils/getColorChangeClass";
+import { Button, Text } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { modals } from "@mantine/modals";
-import {
-  deleteAsset,
-  deleteOrder,
-  updateFixedAsset,
-} from "@/actions/investmentAction";
+import { deleteOrder } from "@/actions/investmentAction";
 
 const PAGE_SIZES = [10, 15, 20];
 
