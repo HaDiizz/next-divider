@@ -120,10 +120,42 @@ export default function OrderTable({ orders }) {
           },
           {
             accessor: "profitLoss",
-            title: "กำไร/ขาดทุน",
+            title: "กำไร/ขาดทุน (USD)",
             sortable: true,
+            render: (record) => (
+              <span
+                className={`transition-colors duration-500 ${
+                  record.profitLoss > 0 ? "text-green-500" : "text-red-500"
+                }`}
+              >
+                {record.profitLoss === 0
+                  ? 0
+                  : record.profitLoss
+                  ? record.profitLoss.toFixed(2)
+                  : "-"}
+              </span>
+            ),
           },
-
+          {
+            accessor: "profitLossPercentage",
+            title: "กำไร/ขาดทุน (%)",
+            sortable: true,
+            render: (record) => (
+              <span
+                className={`transition-colors duration-500 ${
+                  record.profitLossPercentage > 0
+                    ? "text-green-500"
+                    : "text-red-500"
+                }`}
+              >
+                {record.profitLossPercentage === 0
+                  ? `0.00%`
+                  : record.profitLossPercentage
+                  ? `${record.profitLossPercentage.toFixed(2)}%`
+                  : "-"}
+              </span>
+            ),
+          },
           {
             accessor: "",
             textAlign: "center",

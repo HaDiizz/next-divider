@@ -121,6 +121,30 @@ export default function AssetDataTable({ assets, orders }) {
     return profitLoss;
   };
 
+  const calculateProfitLossPercentage = (asset) => {
+    const currentPrice = realTimePrices[asset.symbol] || 0;
+    const ordersForAsset = orders.filter(
+      (order) => order.symbol === asset.symbol
+    );
+
+    let totalCost = 0;
+    let totalProfitLoss = 0;
+
+    ordersForAsset.forEach((order) => {
+      const price = order.status === "closed" ? order.close : currentPrice;
+      const profitLoss = (price - order.open) * order.quantity;
+
+      totalProfitLoss += profitLoss;
+      totalCost += order.open * order.quantity;
+    });
+
+    if (totalCost === 0) return 0;
+
+    const profitLossPercentage = (totalProfitLoss / totalCost) * 100;
+
+    return profitLossPercentage;
+  };
+
   const calculateTotalValue = (asset) => {
     const currentPrice = realTimePrices[asset.symbol] || 0;
     const ordersForAsset = orders.filter(
@@ -155,6 +179,7 @@ export default function AssetDataTable({ assets, orders }) {
           ...asset,
           profitLossRealtime: calculateProfitLoss(asset),
           totalValueRealtime: calculateTotalValue(asset),
+          profitLossPercentage: calculateProfitLossPercentage(asset),
         }))}
         columns={[
           { accessor: "symbol", title: "สินทรัพย์", sortable: true },
@@ -200,18 +225,40 @@ export default function AssetDataTable({ assets, orders }) {
           },
           {
             accessor: "profitLoss",
-            title: "กำไร/ขาดทุน",
+            title: "กำไร/ขาดทุน (USD)",
             sortable: true,
             render: (record) => (
               <span
                 className={`transition-colors duration-500 ${
-                  record.profitLoss > 0 ? "text-green-500" : "text-red-500"
+                  record.profitLossRealtime > 0
+                    ? "text-green-500"
+                    : "text-red-500"
                 }`}
               >
                 {realTimePrices[record.symbol]
                   ? record.profitLossRealtime
                     ? record.profitLossRealtime.toFixed(2)
                     : 0
+                  : "Loading..."}
+              </span>
+            ),
+          },
+          {
+            accessor: "profitLossPercentage",
+            title: "กำไร/ขาดทุน (%)",
+            sortable: true,
+            render: (record) => (
+              <span
+                className={`transition-colors duration-500 ${
+                  record.profitLossPercentage > 0
+                    ? "text-green-500"
+                    : "text-red-500"
+                }`}
+              >
+                {realTimePrices[record.symbol]
+                  ? record.profitLossPercentage === 0
+                    ? `0.00%`
+                    : `${record.profitLossPercentage.toFixed(2)}%`
                   : "Loading..."}
               </span>
             ),
