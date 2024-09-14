@@ -21,7 +21,7 @@ export default async function Page() {
       <Investment secretKey={secretKey?.key || ""} />
       <AssetDataTable
         assets={dataAsset?.assets || []}
-        orders={dataOrder?.orders}
+        orders={dataOrder?.orders || []}
       />
     </div>
   );

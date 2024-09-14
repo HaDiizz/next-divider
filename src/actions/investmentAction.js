@@ -255,7 +255,7 @@ export async function createOrder({ data }) {
 
     await connectDB();
     const { key } = await getRefreshToken();
-    const response = await fetch(`http://localhost:3000/api/order`, {
+    const response = await fetch(process.env.BASE_URL ? `${process.env.BASE_URL}/api/order` : `http://localhost:3000/api/order`, {
       method: "post",
       headers: {
         "Content-Type": "application/json",
