@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 export const GET = async (request) => {
   try {
     const secretKey = request.headers?.get("Secret-Key");
-
+    if (!secretKey) throw { code: 401, message: "Unauthorize" };
     await connectDB();
     let validUser = await User.findOne({
       secretKey: secretKey,
