@@ -27,7 +27,11 @@ export const PUT = async (request) => {
     if (form.close < 0)
       throw { code: 400, message: "Close price must be greater than 0." };
     await Order.findOneAndUpdate(
-      { symbol: form.symbol, user: validUser._id.toString() },
+      {
+        symbol: form.symbol,
+        orderId: form.orderId,
+        user: validUser._id.toString(),
+      },
       { close: form.close, status: "closed" }
     );
     return NextResponse.json({ status: 200 });
