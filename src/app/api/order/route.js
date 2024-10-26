@@ -64,6 +64,7 @@ export const POST = async (request) => {
       !form.symbol ||
       !form.assetType ||
       !form.quantity ||
+      !form.type ||
       !form.open ||
       !validUser._id.toString()
     )

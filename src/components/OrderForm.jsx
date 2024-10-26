@@ -33,6 +33,7 @@ const OrderForm = ({ close }) => {
     mode: "uncontrolled",
     initialValues: {
       symbol: "",
+      type: "long",
       quantity: "",
       open: "",
       close: "",
@@ -40,6 +41,7 @@ const OrderForm = ({ close }) => {
     },
     validate: {
       symbol: isNotEmpty("กรุณาเลือกสินทรัพย์"),
+      type: isNotEmpty("กรุณาเลือกประเภท"),
       quantity: (value) =>
         value
           ? value <= 0
@@ -145,6 +147,17 @@ const OrderForm = ({ close }) => {
           rightSection={IsLoadingSymbols ? <Loader size="1rem" /> : null}
           {...form.getInputProps("symbol")}
           filter={symbolsFilter}
+        />
+        <Select
+          withAsterisk
+          allowDeselect={false}
+          label="เลือกประเภท"
+          data={[
+            { value: "long", label: "Long" },
+            { value: "short", label: "Short" },
+          ]}
+          key={form.key("type")}
+          {...form.getInputProps("type")}
         />
         <TextInput
           withAsterisk

@@ -10,6 +10,11 @@ const orderSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    type: {
+      type: String,
+      required: true,
+      enum: ["short", "long"],
+    },
     assetType: {
       type: String,
       required: true,

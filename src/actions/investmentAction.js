@@ -216,12 +216,13 @@ export async function getOrders() {
 
 export async function createOrder({ data }) {
   try {
-    const { assetType, symbol, quantity, open, status } = data;
+    const { assetType, symbol, quantity, open, status, type } = data;
     const session = await getServerSession(authOptions);
     if (!session) {
       throw { message: "กรุณาเข้าสู่ระบบ" };
     }
     if (
+      type === "" ||
       assetType === "" ||
       symbol === "" ||
       quantity === "" ||

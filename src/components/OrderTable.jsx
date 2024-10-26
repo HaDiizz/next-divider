@@ -116,17 +116,28 @@ export default function OrderTable({ orders }) {
           profitLossPercentage: calculateProfitLossPercentage(order),
         }))}
         columns={[
-          {
-            accessor: "orderId",
-            title: "Order ID",
-            sortable: true,
-            render: (record) => record?.orderId || "-",
-          },
+          // {
+          //   accessor: "orderId",
+          //   title: "Order ID",
+          //   sortable: true,
+          //   render: (record) => record?.orderId || "-",
+          // },
           { accessor: "symbol", title: "สินทรัพย์", sortable: true },
           {
             accessor: "assetType",
             title: "ประเภทสินทรัพย์",
             sortable: true,
+            render: (record) => record?.assetType?.toUpperCase() || "-",
+          },
+          {
+            accessor: "type",
+            title: "Position",
+            sortable: true,
+            render: (record) => (
+              <Badge color={`${record?.type === "long" ? "green" : "red"}`}>
+                {record?.type}
+              </Badge>
+            ),
           },
           {
             accessor: "quantity",
