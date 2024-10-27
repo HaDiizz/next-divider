@@ -112,7 +112,7 @@ export const GET = async (request) => {
       query.status = status;
     }
 
-    const orders = await Order.find(query).lean().select("_id");
+    const orders = await Order.find(query).lean().select("_id orderId");
 
     return NextResponse.json({ status: 200, orders });
   } catch (err) {
