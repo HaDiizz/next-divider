@@ -145,6 +145,12 @@ export default function OrderTable({ orders }) {
             sortable: true,
           },
           {
+            accessor: "leverage",
+            title: "Leverage",
+            sortable: true,
+            render: (record) => record?.leverage || "-",
+          },
+          {
             accessor: "open",
             title: "ราคาเปิด (USD)",
             sortable: true,

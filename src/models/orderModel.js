@@ -44,6 +44,10 @@ const orderSchema = new mongoose.Schema(
     stopLossOrderId: {
       type: String,
     },
+    leverage: {
+      type: Number,
+      default: 1,
+    },
     // profitLoss: {
     //   type: Number,
     //   default: 0,
