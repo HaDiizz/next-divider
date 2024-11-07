@@ -22,7 +22,12 @@ export const PUT = async (request) => {
       user: validUser._id.toString(),
     });
     if (!isAssetExist) throw { code: 404, message: "Asset does not exist." };
-    if (!form.symbol || !form.close || !validUser._id.toString())
+    if (
+      !form.symbol ||
+      !form.close ||
+      !validUser._id.toString() ||
+      !form.orderType
+    )
       throw { code: 400, message: "Field are required." };
     if (form.close < 0)
       throw { code: 400, message: "Close price must be greater than 0." };
@@ -32,7 +37,7 @@ export const PUT = async (request) => {
         orderId: form.orderId,
         user: validUser._id.toString(),
       },
-      { close: form.close, status: "closed" }
+      { close: form.close, status: "closed", orderType: form.orderType }
     );
     return NextResponse.json({ status: 200 });
   } catch (err) {
