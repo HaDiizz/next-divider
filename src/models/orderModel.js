@@ -35,6 +35,15 @@ const orderSchema = new mongoose.Schema(
       enum: ["open", "closed"],
       default: "open",
     },
+    orderType: {
+      type: String,
+    },
+    takeProfitOrderId: {
+      type: String,
+    },
+    stopLossOrderId: {
+      type: String,
+    },
     // profitLoss: {
     //   type: Number,
     //   default: 0,
