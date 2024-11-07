@@ -116,7 +116,7 @@ export default function AssetDataTable({ assets, orders }) {
     ordersForAsset.forEach((order) => {
       const price = order.status === "closed" ? order.close : currentPrice;
 
-      profitLoss += (price - order.open) * order.quantity * order.leverage;
+      profitLoss += (price - order.open) * order.quantity;
     });
 
     return profitLoss;
@@ -159,7 +159,7 @@ export default function AssetDataTable({ assets, orders }) {
     ordersForAsset.forEach((order) => {
       const price = order.status === "closed" ? order.close : currentPrice;
 
-      totalValue += price * order.quantity * order.leverage;
+      totalValue += price * order.quantity;
     });
 
     return totalValue;

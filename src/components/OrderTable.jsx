@@ -123,7 +123,8 @@ export default function OrderTable({ orders }) {
       positionSize *
       directionMultiplier;
 
-    return order.leverage ? pnlUSDT * Number(order.leverage) : pnlUSDT;
+    // return order.leverage ? pnlUSDT * Number(order.leverage) : pnlUSDT;
+    return pnlUSDT;
   };
 
   return (
