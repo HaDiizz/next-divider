@@ -81,7 +81,6 @@ export default function OrderTable({ orders }) {
 
   const calculateProfitLossPercentage = (order) => {
     if (
-      !order ||
       !order.symbol ||
       !order.open ||
       !order.quantity ||
@@ -93,18 +92,18 @@ export default function OrderTable({ orders }) {
     const currentPrice = realTimePrices[order.symbol];
     const closePrice = order.status === "open" ? currentPrice : order.close;
 
-    const pnlPercentage = ((closePrice - order.open) / order.open) * 100;
+    const directionMultiplier = order.type === "short" ? -1 : 1;
 
-    if (order.leverage) {
-      return pnlPercentage * Number(order.leverage);
-    }
+    const pnlPercentage =
+      ((closePrice - order.open) / order.open) * 100 * directionMultiplier;
 
-    return pnlPercentage;
+    return order.leverage
+      ? pnlPercentage * Number(order.leverage)
+      : pnlPercentage;
   };
 
   const calculateProfitLoss = (order) => {
     if (
-      !order ||
       !order.symbol ||
       !order.open ||
       !order.quantity ||
@@ -116,14 +115,15 @@ export default function OrderTable({ orders }) {
     const currentPrice = realTimePrices[order.symbol];
     const closePrice = order.status === "open" ? currentPrice : order.close;
 
+    const directionMultiplier = order.type === "short" ? -1 : 1;
+
     const positionSize = order.quantity * order.open;
-    const pnlUSDT = ((closePrice - order.open) / order.open) * positionSize;
+    const pnlUSDT =
+      ((closePrice - order.open) / order.open) *
+      positionSize *
+      directionMultiplier;
 
-    if (order.leverage) {
-      return pnlUSDT * Number(order.leverage);
-    }
-
-    return pnlUSDT;
+    return order.leverage ? pnlUSDT * Number(order.leverage) : pnlUSDT;
   };
 
   return (
