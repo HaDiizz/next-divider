@@ -117,7 +117,9 @@ export const GET = async (request) => {
       query.status = status;
     }
 
-    const orders = await Order.find(query).lean().select("_id orderId");
+    const orders = await Order.find(query)
+      .lean()
+      .select("_id orderId takeProfitOrderId stopLossOrderId");
 
     return NextResponse.json({ status: 200, orders });
   } catch (err) {
