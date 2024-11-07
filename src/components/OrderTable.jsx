@@ -79,20 +79,51 @@ export default function OrderTable({ orders }) {
     });
   };
 
-  const calculateProfitLoss = (order) => {
-    if (order.status === "open") {
-      const currentPrice = realTimePrices[order.symbol] || 0;
-      return (currentPrice - order.open) * order.quantity;
+  const calculateProfitLossPercentage = (order) => {
+    if (
+      !order ||
+      !order.symbol ||
+      !order.open ||
+      !order.quantity ||
+      !realTimePrices[order.symbol]
+    ) {
+      return "-";
     }
-    return (order.close - order.open) * order.quantity;
+
+    const currentPrice = realTimePrices[order.symbol];
+    const closePrice = order.status === "open" ? currentPrice : order.close;
+
+    const pnlPercentage = ((closePrice - order.open) / order.open) * 100;
+
+    if (order.leverage) {
+      return pnlPercentage * Number(order.leverage);
+    }
+
+    return pnlPercentage;
   };
 
-  const calculateProfitLossPercentage = (order) => {
-    if (order.status === "open") {
-      const currentPrice = realTimePrices[order.symbol] || 0;
-      return ((currentPrice - order.open) / order.open) * 100;
+  const calculateProfitLoss = (order) => {
+    if (
+      !order ||
+      !order.symbol ||
+      !order.open ||
+      !order.quantity ||
+      !realTimePrices[order.symbol]
+    ) {
+      return "-";
     }
-    return ((order.close - order.open) / order.open) * 100;
+
+    const currentPrice = realTimePrices[order.symbol];
+    const closePrice = order.status === "open" ? currentPrice : order.close;
+
+    const positionSize = order.quantity * order.open;
+    const pnlUSDT = ((closePrice - order.open) / order.open) * positionSize;
+
+    if (order.leverage) {
+      return pnlUSDT * Number(order.leverage);
+    }
+
+    return pnlUSDT;
   };
 
   return (
@@ -125,8 +156,9 @@ export default function OrderTable({ orders }) {
           { accessor: "symbol", title: "สินทรัพย์", sortable: true },
           {
             accessor: "assetType",
-            title: "ประเภทสินทรัพย์",
+            title: "ประเภท",
             sortable: true,
+            width: "90px",
             render: (record) => record?.assetType?.toUpperCase() || "-",
           },
           {

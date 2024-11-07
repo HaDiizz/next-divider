@@ -115,7 +115,8 @@ export default function AssetDataTable({ assets, orders }) {
     let profitLoss = 0;
     ordersForAsset.forEach((order) => {
       const price = order.status === "closed" ? order.close : currentPrice;
-      profitLoss += (price - order.open) * order.quantity;
+
+      profitLoss += (price - order.open) * order.quantity * order.leverage;
     });
 
     return profitLoss;
@@ -128,21 +129,24 @@ export default function AssetDataTable({ assets, orders }) {
     );
 
     let totalCost = 0;
-    let totalProfitLoss = 0;
+    let totalProfitLossPercentage = 0;
 
     ordersForAsset.forEach((order) => {
       const price = order.status === "closed" ? order.close : currentPrice;
-      const profitLoss = (price - order.open) * order.quantity;
+      const profitLossPerOrder =
+        ((price - order.open) / order.open) * order.leverage * 100;
 
-      totalProfitLoss += profitLoss;
+      totalProfitLossPercentage +=
+        profitLossPerOrder * (order.open * order.quantity);
+
       totalCost += order.open * order.quantity;
     });
 
     if (totalCost === 0) return 0;
 
-    const profitLossPercentage = (totalProfitLoss / totalCost) * 100;
+    const averageProfitLossPercentage = totalProfitLossPercentage / totalCost;
 
-    return profitLossPercentage;
+    return averageProfitLossPercentage;
   };
 
   const calculateTotalValue = (asset) => {
@@ -154,7 +158,8 @@ export default function AssetDataTable({ assets, orders }) {
     let totalValue = 0;
     ordersForAsset.forEach((order) => {
       const price = order.status === "closed" ? order.close : currentPrice;
-      totalValue += price * order.quantity;
+
+      totalValue += price * order.quantity * order.leverage;
     });
 
     return totalValue;
