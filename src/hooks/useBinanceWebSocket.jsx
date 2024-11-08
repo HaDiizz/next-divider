@@ -12,7 +12,7 @@ export const useBinanceWebSocket = (symbols) => {
       .map((symbol) => `${symbol.toLowerCase()}@miniTicker`)
       .join("/");
     const ws = new WebSocket(
-      `wss://stream.binance.com:9443/stream?streams=${streamName}`
+      `wss://fstream.binance.com/stream?streams=${streamName}`
     );
 
     ws.onmessage = (event) => {
