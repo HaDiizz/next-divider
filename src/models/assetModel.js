@@ -10,6 +10,7 @@ const assetSchema = new mongoose.Schema(
     profitLoss: { type: Number, default: 0 },
     isFixed: { type: Boolean, required: true },
     assetType: { type: String, required: true },
+    timeframe: { type: String, required: true },
   },
   { timestamps: true }
 );

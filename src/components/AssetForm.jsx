@@ -18,6 +18,8 @@ const symbolsFilter = ({ options, search }) => {
 
 const AssetForm = ({ close }) => {
   const [assetType, setAssetType] = React.useState("crypto");
+  const [timeframe, setTimeframe] = React.useState("15m");
+  const [showTimeframe, setShowTimeframe] = React.useState(false);
   const {
     data: symbols = [],
     isLoading: IsLoadingSymbols,
@@ -42,6 +44,10 @@ const AssetForm = ({ close }) => {
     refetch();
   }, [assetType, refetch]);
 
+  React.useEffect(() => {
+    setShowTimeframe(!form.values.isFixed);
+  }, [form.values.isFixed]);
+
   const handleAssetTypeChange = (value) => {
     setAssetType(value);
     form.setFieldValue("symbol", "");
@@ -59,7 +65,9 @@ const AssetForm = ({ close }) => {
     }
     setIsSubmitting(true);
     try {
-      const response = await createAsset({ data: { ...data, assetType } });
+      const response = await createAsset({
+        data: { ...data, assetType, timeframe: timeframe || "15m" },
+      });
       if (response.error) {
         notifications.show({
           title: "เกิดข้อผิดพลาด",
@@ -86,6 +94,12 @@ const AssetForm = ({ close }) => {
       close();
       form.reset();
     }
+  };
+
+  const handleIsFixedChange = (event) => {
+    const isChecked = event.currentTarget.checked;
+    form.setFieldValue("isFixed", isChecked);
+    setShowTimeframe(!isChecked);
   };
 
   return (
@@ -118,7 +132,28 @@ const AssetForm = ({ close }) => {
           key={form.key("isFixed")}
           {...form.getInputProps("isFixed", { type: "checkbox" })}
           label="Fix this asset (Do not allow bot to trade)"
+          onChange={handleIsFixedChange}
         />
+        {showTimeframe && (
+          <Select
+            withAsterisk
+            allowDeselect={false}
+            label="เลือก Timeframe"
+            data={[
+              { value: "1m", label: "1 Minute" },
+              { value: "5m", label: "5 Minute" },
+              { value: "15m", label: "15 Minute" },
+              { value: "30m", label: "30 Minute" },
+              { value: "1h", label: "1 Hour" },
+              { value: "2h", label: "2 Hour" },
+              { value: "4h", label: "4 Hour" },
+              { value: "1d", label: "1 Day" },
+            ]}
+            value={timeframe}
+            onChange={setTimeframe}
+            className="mb-4"
+          />
+        )}
         <div className="flex justify-end">
           <Button
             loading={isSubmitting}

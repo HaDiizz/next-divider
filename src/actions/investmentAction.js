@@ -9,7 +9,7 @@ import { getRefreshToken } from "./authAction";
 
 export async function createAsset({ data }) {
   try {
-    const { symbol, isFixed, assetType } = data;
+    const { symbol, isFixed, assetType, timeframe } = data;
     const session = await getServerSession(authOptions);
     if (!session) {
       throw { message: "กรุณาเข้าสู่ระบบ" };
@@ -32,6 +32,7 @@ export async function createAsset({ data }) {
       profitLoss: 0,
       isFixed,
       assetType,
+      timeframe,
     });
     await newAsset.save();
     await new Promise((resolve) => setTimeout(resolve, 1000));

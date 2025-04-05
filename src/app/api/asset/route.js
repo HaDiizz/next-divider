@@ -18,7 +18,7 @@ export const GET = async (request) => {
     const assets = await Asset.find({
       user: validUser._id.toString(),
       isFixed: false,
-    }).select("symbol assetType");
+    }).select("symbol assetType timeframe").lean();
 
     return NextResponse.json({ status: 200, assets });
   } catch (err) {

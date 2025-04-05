@@ -277,6 +277,9 @@ export default function AssetDataTable({ assets, orders }) {
             ),
           },
           {
+            accessor: "timeframe",
+          },
+          {
             accessor: "isFixed",
             title: "ใช้บอทเทรด",
             sortable: true,
