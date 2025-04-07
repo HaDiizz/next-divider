@@ -297,3 +297,32 @@ export async function deleteOrder(id) {
     };
   }
 }
+
+export async function updateOrder(id, price) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      throw { message: "กรุณาเข้าสู่ระบบ" };
+    }
+    await connectDB();
+    const order = await Order.findOne({ _id: id, user: session.user._id });
+    if (!order) throw { message: "ไม่เจอสินทรัพย์ดังกล่าว" };
+
+    await Order.findByIdAndUpdate(id, {
+      close: Number(price),
+      status: "closed",
+    });
+
+    revalidatePath(`/investment/order`);
+    return {
+      success: true,
+      message: "อัปเดต Order สำเร็จ",
+    };
+  } catch (err) {
+    console.log(err);
+    return {
+      error: true,
+      message: err?.message || "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง",
+    };
+  }
+}

@@ -6,13 +6,14 @@ import { ChevronUpIcon, CaretSortIcon, TrashIcon } from "@radix-ui/react-icons";
 import { Badge, Button, Text } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { modals } from "@mantine/modals";
-import { deleteOrder } from "@/actions/investmentAction";
+import { deleteOrder, updateOrder } from "@/actions/investmentAction";
 import { useBinanceWebSocket } from "@/hooks/useBinanceWebSocket";
 
 const PAGE_SIZES = [10, 15, 20];
 
 export default function OrderTable({ orders }) {
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(PAGE_SIZES[1]);
   const [sortStatus, setSortStatus] = useState({
@@ -74,6 +75,50 @@ export default function OrderTable({ orders }) {
           });
         } finally {
           setIsDeleting(false);
+        }
+      },
+    });
+  };
+
+  const handleUpdateOrder = async (id, symbol, price) => {
+    if (price === undefined || price === null) return;
+
+    modals.openConfirmModal({
+      title: "อัปเดตรายการ",
+      centered: true,
+      children: (
+        <Text size="sm">
+          ต้องการปิดรายการ {symbol} ที่ {price} ใช่ไหม
+        </Text>
+      ),
+      labels: { confirm: "ยืนยัน", cancel: "ยกเลิก" },
+      confirmProps: { color: "blue" },
+      onCancel: () => {},
+      onConfirm: async () => {
+        setIsUpdating(true);
+        try {
+          const response = await updateOrder(id, price);
+          if (response.error) {
+            notifications.show({
+              title: "เกิดข้อผิดพลาด",
+              message: response?.message || "อัปเดตรายการไม่สำเร็จ",
+              color: "red",
+            });
+          } else {
+            notifications.show({
+              title: "สำเร็จ",
+              message: response?.message || "อัปเดตรายการสำเร็จ",
+              color: "green",
+            });
+          }
+        } catch (err) {
+          notifications.show({
+            title: "เกิดข้อผิดพลาด",
+            message: err?.message || "อัปเดตรายการไม่สำเร็จ",
+            color: "red",
+          });
+        } finally {
+          setIsUpdating(false);
         }
       },
     });
@@ -250,7 +295,23 @@ export default function OrderTable({ orders }) {
             accessor: "",
             textAlign: "center",
             render: (record) => (
-              <div className="flex gap-x-3 justify-center">
+              <div className="flex gap-x-3 justify-start items-center">
+                {record.status === "open" && (
+                  <Button
+                    loading={isUpdating}
+                    variant="transparent"
+                    radius="xl"
+                    onClick={() =>
+                      handleUpdateOrder(
+                        record._id,
+                        record.symbol,
+                        realTimePrices[record.symbol]
+                      )
+                    }
+                  >
+                    TP/SL
+                  </Button>
+                )}
                 <Button loading={isDeleting} variant="transparent" radius="xl">
                   <TrashIcon
                     onClick={() => handleDeleteOrder(record._id, record.symbol)}
